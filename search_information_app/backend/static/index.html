@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>CorpIntelligence | 企业信息检索聚合系统</title>
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="/static/style.css" />
 </head>
 <body>
 <div class="container">
@@ -17,27 +17,18 @@
         <div class="form-group">
             <label>🏢 选择目标企业（可多选）：</label>
             <div class="company-checkboxes" id="companiesContainer"></div>
-
             <div class="custom-company-input">
-                <input type="text" id="customCompany" class="input-field" placeholder="输入其他企业名称（如：大疆、宁德时代等）" />
+                <input type="text" id="customCompany" class="input-field" placeholder="输入其他企业名称" />
             </div>
         </div>
-
         <div class="form-group">
             <label>📅 时间（可选）：</label>
             <input type="date" id="dateRange" class="input-field" />
         </div>
-
         <div class="form-group">
             <label>🔍 检索关键词（可选）：</label>
-            <input
-                type="text"
-                id="keyword"
-                class="input-field"
-                placeholder="例如：财报披露、战略布局、核心技术"
-            />
+            <input type="text" id="keyword" class="input-field" placeholder="例如：财报披露、战略布局" />
         </div>
-
         <button class="btn-primary" id="searchBtn">
             <span id="btnText">检 索</span>
             <span id="loadingSpinner" class="spinner" style="display:none;"></span>
@@ -45,11 +36,10 @@
     </section>
 
     <section class="results-section" id="resultsSection" style="display:none;">
-        <h2>📊 整合分析报告</h2>
+        <h3>检索结果报告</h3>
         <div id="resultsContainer"></div>
     </section>
 </div>
-
-<script src="script.js"></script>
+<script src="/static/script.js"></script>
 </body>
 </html>
