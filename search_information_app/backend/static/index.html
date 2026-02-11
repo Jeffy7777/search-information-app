@@ -3,43 +3,42 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>CorpIntelligence | 企业信息检索聚合系统</title>
+    <title>企业信息检索聚合系统</title>
     <link rel="stylesheet" href="/static/style.css" />
 </head>
 <body>
 <div class="container">
     <header>
-        <h1>CorpIntelligence 企业信息检索聚合系统</h1>
-        <p class="subtitle">并行检索企业信息，自动生成结构化报告</p>
+        <h1>企业信息检索聚合系统</h1>
+        <p class="subtitle">并行检索企业信息，自动生成报告</p>
     </header>
 
     <section class="search-section">
         <div class="form-group">
-            <label>🏢 选择目标企业（可多选）：</label>
+            <label>🏢 选择主体：</label>
             <div class="company-checkboxes" id="companiesContainer"></div>
-            <div class="custom-company-input">
-                <input type="text" id="customCompany" class="input-field" placeholder="输入其他企业名称" />
-            </div>
+            <input type="text" id="customCompany" class="input-field" placeholder="手动输入主体名称" style="margin-top:10px" />
         </div>
         <div class="form-group">
-            <label>📅 时间（可选）：</label>
+            <label>📅 时间：</label>
             <input type="date" id="dateRange" class="input-field" />
         </div>
         <div class="form-group">
-            <label>🔍 检索关键词（可选）：</label>
-            <input type="text" id="keyword" class="input-field" placeholder="例如：财报披露、战略布局" />
+            <label>🔍 关键词：</label>
+            <input type="text" id="keyword" class="input-field" placeholder="检索关键词" />
         </div>
         <button class="btn-primary" id="searchBtn">
-            <span id="btnText">检 索</span>
+            <span id="btnText">开始检索</span>
             <span id="loadingSpinner" class="spinner" style="display:none;"></span>
         </button>
     </section>
 
     <section class="results-section" id="resultsSection" style="display:none;">
-        <h3>检索结果报告</h3>
+        <h3>检索报告</h3>
         <div id="resultsContainer"></div>
     </section>
 </div>
+
 <script src="/static/script.js"></script>
 </body>
 </html>
