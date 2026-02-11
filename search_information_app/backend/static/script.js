@@ -1,3 +1,4 @@
+// static/script.js
 const companiesContainer = document.getElementById("companiesContainer");
 const searchBtn = document.getElementById("searchBtn");
 const resultsSection = document.getElementById("resultsSection");
@@ -5,7 +6,6 @@ const resultsContainer = document.getElementById("resultsContainer");
 const spinner = document.getElementById("loadingSpinner");
 const btnText = document.getElementById("btnText");
 
-// 预设主体名单
 const PRESET_COMPANIES = ["华为", "腾讯", "字节跳动", "阿里巴巴", "拼多多", "小米", "网易", "美团", "京东", "携程", "百度", "快手"];
 
 // 初始化加载预设主体
@@ -22,32 +22,22 @@ PRESET_COMPANIES.forEach(name => {
     companiesContainer.appendChild(div);
 });
 
-/**
- * 自动脱壳函数：处理 Dify 嵌套格式
- */
 function autoUnwrap(data) {
     if (data.text1 && typeof data.text1 === 'string') {
         try {
             let cleanStr = data.text1.replace(/```json\n?|```/g, '').trim();
             return JSON.parse(cleanStr);
         } catch (e) {
-            console.error("解析 text1 失败", e);
+            console.error("解析失败", e);
         }
     }
     return data;
 }
 
 searchBtn.addEventListener("click", async () => {
-    // 1. 获取勾选的主体
-    const selected = Array.from(
-        document.querySelectorAll(".company-checkbox input:checked")
-    ).map(cb => cb.value);
-
-    // 2. 获取输入的主体
+    const selected = Array.from(document.querySelectorAll(".company-checkbox input:checked")).map(cb => cb.value);
     const customInput = document.getElementById("customCompany").value;
     const customCompanies = customInput ? customInput.split(/[，, ]+/).filter(v => v.trim()) : [];
-
-    // 3. 合并去重
     const finalCompanies = [...new Set([...selected, ...customCompanies])];
 
     if (finalCompanies.length === 0) {
@@ -63,7 +53,9 @@ searchBtn.addEventListener("click", async () => {
     searchBtn.disabled = true;
 
     try {
-        const resp = await fetch("/api/generate-report", {
+        // 修改点：使用 window.location.origin 自动适配部署后的域名
+        const apiBase = window.location.origin;
+        const resp = await fetch(`${apiBase}/api/generate-report`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ companies: finalCompanies, date, key_words })
@@ -75,6 +67,7 @@ searchBtn.addEventListener("click", async () => {
 
     } catch (error) {
         console.error("Fetch error:", error);
+        alert("连接服务器失败，请检查网络");
     } finally {
         spinner.style.display = "none";
         btnText.textContent = "执行情报检索";
@@ -82,9 +75,6 @@ searchBtn.addEventListener("click", async () => {
     }
 });
 
-/**
- * 渲染结果
- */
 function renderResults(reports) {
     resultsContainer.innerHTML = "";
     resultsSection.style.display = "block";
@@ -94,30 +84,14 @@ function renderResults(reports) {
         card.className = "report-card";
 
         const overviewHtml = `<p class="compact-overview">${report.overview || ""}</p>`;
-
         let itemsHtml = "";
         (report.items || []).forEach(item => {
-            itemsHtml += `<p class="compact-item-line"><strong>${item.date}｜${item.topic}：</strong>${item.fact}${item.analysis}</p>`;
+            itemsHtml += `<p class="compact-item-line"><strong>${item.date || ""}｜${item.topic || ""}：</strong>${item.fact || ""}${item.analysis || ""}</p>`;
         });
 
         let sourcesHtml = "";
-        let finalSources = [];
-        if (report.formatted_sources) {
-            finalSources = report.formatted_sources;
-        } else {
-            const seenUrls = new Set();
-            (report.items || []).forEach(item => {
-                (item.sources || []).forEach(s => {
-                    if (s.url && !seenUrls.has(s.url)) {
-                        seenUrls.add(s.url);
-                        finalSources.push({ id: finalSources.length + 1, title: s.title, url: s.url });
-                    }
-                });
-            });
-        }
-
-        if (finalSources.length > 0) {
-            const sourceLines = finalSources.map(s =>
+        if (report.formatted_sources && report.formatted_sources.length > 0) {
+            const sourceLines = report.formatted_sources.map(s =>
                 `<div class="compact-source-line">[${s.id}] <a href="${s.url}" target="_blank" class="reference-link">${s.title}</a></div>`
             ).join("");
             sourcesHtml = `<div class="compact-sources-container"><strong>信息来源：</strong>${sourceLines}</div>`;
