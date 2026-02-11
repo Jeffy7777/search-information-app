@@ -5,12 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>CorpIntelligence | 企业信息检索聚合系统</title>
     <link rel="stylesheet" href="/static/style.css" />
+    <style>
+        /* 这里的样式确保文字在白框内部的最下方，且不干扰其他内容 */
+        .footer-credit {
+            text-align: center;
+            padding-top: 20px;
+            margin-top: 20px;
+            border-top: 1px solid #f0f0f0;
+            color: #bfbfbf;
+            font-size: 0.85em;
+        }
+    </style>
 </head>
 <body>
 <div class="container">
     <header>
         <h1>CorpIntelligence 企业信息检索聚合系统</h1>
-        <p class="subtitle">并行检索企业信息，自动生成结构化报告（Created by Jeffy）</p>
+        <p class="subtitle">并行检索企业信息，自动生成结构化报告</p>
     </header>
 
     <section class="search-section">
@@ -48,8 +59,10 @@
         <h2>📊 整合分析报告</h2>
         <div id="resultsContainer"></div>
     </section>
-</div>
 
-<script src="/static/script.js"></script>
+    <div class="footer-credit">
+        Created by Jeffy
+    </div>
+</div> <script src="/static/script.js"></script>
 </body>
 </html>
