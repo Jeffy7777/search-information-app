@@ -1,4 +1,3 @@
-// static/script.js
 const companiesContainer = document.getElementById("companiesContainer");
 const searchBtn = document.getElementById("searchBtn");
 const resultsSection = document.getElementById("resultsSection");
@@ -8,7 +7,6 @@ const btnText = document.getElementById("btnText");
 
 const PRESET_COMPANIES = ["华为", "腾讯", "字节跳动", "阿里巴巴", "拼多多", "小米", "网易", "美团", "京东", "携程", "百度", "快手"];
 
-// 初始化加载预设主体
 PRESET_COMPANIES.forEach(name => {
     const div = document.createElement("div");
     div.className = "company-checkbox";
@@ -22,18 +20,6 @@ PRESET_COMPANIES.forEach(name => {
     companiesContainer.appendChild(div);
 });
 
-function autoUnwrap(data) {
-    if (data.text1 && typeof data.text1 === 'string') {
-        try {
-            let cleanStr = data.text1.replace(/```json\n?|```/g, '').trim();
-            return JSON.parse(cleanStr);
-        } catch (e) {
-            console.error("解析失败", e);
-        }
-    }
-    return data;
-}
-
 searchBtn.addEventListener("click", async () => {
     const selected = Array.from(document.querySelectorAll(".company-checkbox input:checked")).map(cb => cb.value);
     const customInput = document.getElementById("customCompany").value;
@@ -41,36 +27,31 @@ searchBtn.addEventListener("click", async () => {
     const finalCompanies = [...new Set([...selected, ...customCompanies])];
 
     if (finalCompanies.length === 0) {
-        alert("请选择或输入至少一个检索主体");
+        alert("请选择主体");
         return;
     }
 
-    const date = document.getElementById("dateRange").value;
-    const key_words = document.getElementById("keyword").value;
-
     spinner.style.display = "inline-block";
-    btnText.textContent = "执行检索中...";
+    btnText.textContent = "执行中...";
     searchBtn.disabled = true;
 
     try {
-        // 修改点：使用 window.location.origin 自动适配部署后的域名
-        const apiBase = window.location.origin;
-        const resp = await fetch(`${apiBase}/api/generate-report`, {
+        const resp = await fetch(`${window.location.origin}/api/generate-report`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ companies: finalCompanies, date, key_words })
+            body: JSON.stringify({
+                companies: finalCompanies,
+                date: document.getElementById("dateRange").value,
+                key_words: document.getElementById("keyword").value
+            })
         });
-
         const data = await resp.json();
-        const processedReports = (data.reports || []).map(report => autoUnwrap(report));
-        renderResults(processedReports);
-
+        renderResults(data.reports || []);
     } catch (error) {
-        console.error("Fetch error:", error);
-        alert("连接服务器失败，请检查网络");
+        alert("检索失败");
     } finally {
         spinner.style.display = "none";
-        btnText.textContent = "执行情报检索";
+        btnText.textContent = "检 索";
         searchBtn.disabled = false;
     }
 });
@@ -78,31 +59,18 @@ searchBtn.addEventListener("click", async () => {
 function renderResults(reports) {
     resultsContainer.innerHTML = "";
     resultsSection.style.display = "block";
-
     reports.forEach(report => {
         const card = document.createElement("div");
         card.className = "report-card";
-
-        const overviewHtml = `<p class="compact-overview">${report.overview || ""}</p>`;
-        let itemsHtml = "";
-        (report.items || []).forEach(item => {
-            itemsHtml += `<p class="compact-item-line"><strong>${item.date || ""}｜${item.topic || ""}：</strong>${item.fact || ""}${item.analysis || ""}</p>`;
-        });
-
-        let sourcesHtml = "";
-        if (report.formatted_sources && report.formatted_sources.length > 0) {
-            const sourceLines = report.formatted_sources.map(s =>
-                `<div class="compact-source-line">[${s.id}] <a href="${s.url}" target="_blank" class="reference-link">${s.title}</a></div>`
-            ).join("");
-            sourcesHtml = `<div class="compact-sources-container"><strong>信息来源：</strong>${sourceLines}</div>`;
-        }
-
         card.innerHTML = `
             <div class="company-header">
                 <div class="company-logo">${(report.company || "企")[0]}</div>
-                <div class="company-name">${report.company || "未知主体"}</div>
+                <div class="company-name">${report.company}</div>
             </div>
-            <div class="report-content">${overviewHtml}${itemsHtml}${sourcesHtml}</div>
+            <div class="report-content">
+                <p>${report.overview}</p>
+                ${(report.items || []).map(item => `<p><strong>${item.topic}：</strong>${item.fact}</p>`).join("")}
+            </div>
         `;
         resultsContainer.appendChild(card);
     });
