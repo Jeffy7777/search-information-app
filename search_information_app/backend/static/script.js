@@ -77,7 +77,7 @@ searchBtn.addEventListener("click", async () => {
         console.error("Fetch error:", error);
     } finally {
         spinner.style.display = "none";
-        btnText.textContent = "执行情报检索";
+        btnText.textContent = "检索完成";
         searchBtn.disabled = false;
     }
 });
