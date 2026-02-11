@@ -6,7 +6,7 @@ const spinner = document.getElementById("loadingSpinner");
 const btnText = document.getElementById("btnText");
 
 // 预设主体名单
-const PRESET_COMPANIES = ["华为", "腾讯", "字节跳动", "阿里巴巴", "拼多多", "小米", "网易", "美团", "京东", "携程", "百度", "快手"];
+const PRESET_COMPANIES = ["华为", "腾讯", "字节跳动", "阿里巴巴", "拼多多", "小红书", "网易", "美团", "京东", "携程", "百度", "快手"];
 
 // 初始化加载预设主体
 PRESET_COMPANIES.forEach(name => {
